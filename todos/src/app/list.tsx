@@ -16,10 +16,13 @@ function TodoItem () {
 
 export function TodoList(){
     return (
-        <div className="todoList">
-            <TodoItem />
-            <TodoItem />
-            <TodoItem />
+        <div>
+            <h1>Todos</h1>
+            <div className="todoList">
+                <TodoItem />
+                <TodoItem />
+                <TodoItem />
+            </div>
         </div>
     );
 }
