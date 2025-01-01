@@ -1,9 +1,8 @@
 "use client";
 
-import Button from "./components/button"
 import { Item } from "./components/item";
-import { createItem } from "./actions/itemActions"
 import { useState } from "react";
+import { generateUUID } from "./actions/UUID";
 
 function TodoItem({item}: {item:Item}) {
     // parse out data
@@ -21,7 +20,7 @@ function TodoItem({item}: {item:Item}) {
     )
 }
 
-let list: Array<Item> = [
+let list: Array<Item> = [ // move to server
     new Item("Item 1", "The first item on your todo list.", true, "test1"),
     new Item("Item 2", "Skip this one, it's boring!", false, "test2"),
     new Item("Play with Niko and Bean", "Lots of fun with the cats", true, "test3")
@@ -34,15 +33,17 @@ export function TodoList() {
     // generate a TodoItem for every item in list (Note: all top level components in the map function need a unique key)
     let todos = items.map(listItem => <TodoItem key={listItem.id} item={listItem}/>);
 
-    function onAdd() {
+    function openModal() {
         setAddModalHidden(false);
     }
 
-    function handleAdd(e: any) {
-        e.preventDefault();
+    async function handleAdd(formData: FormData) { // move to server
+        const title = formData.get("title") !== null ? formData.get("title") as string : "";
+        const description = formData.get("description") !== null ? formData.get("description") as string : "";
+        const completed = formData.get("completed") ? true : false;
 
         list = items;
-        list.push(new Item("title", "description", false, "key"));
+        list.push(new Item(title, description, completed, await generateUUID()));
         
         setItems(list);
         
@@ -70,12 +71,12 @@ export function TodoList() {
                     width: "600px",
                     height: "400px",
                 }}>
-                <form>
+                <form action={(e) => handleAdd(e)}>
                     <h1>Create a new Todo</h1>
                     <input name="title" type="text"></input> <br></br>
                     <input name="description" type="text"></input> <br></br>
-                    <input name="completed" type="checkbox"></input> <br></br>
-                    <button onClick={(e) => handleAdd(e)}>Submit</button>
+                    <input name="completed" type="checkbox" value="completed" ></input> <br></br>
+                    <button type="submit">Submit</button>
                 </form>
             </div>
 
@@ -85,7 +86,7 @@ export function TodoList() {
                     todos // list of TodoItems generated above
                 }
             </div>
-            <button onClick={onAdd}>Add</button>
+            <button onClick={openModal}>Add</button>
         </div>
     );
 }
