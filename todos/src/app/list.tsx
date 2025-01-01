@@ -43,7 +43,6 @@ export function TodoList() {
 
         list = items;
         list.push(new Item("title", "description", false, "key"));
-        console.log(list);
         
         setItems(list);
         
